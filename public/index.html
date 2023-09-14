@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>实时聊天</title>
+  <style>
+	#input{
+	  width: 250px;
+	  white-space: pre-wrap;
+	  /* resize:none; */
+
+	}
+    #messages {
+	  padding: 5px;
+      height: 300px;
+	  width: 300px;
+      overflow-y: scroll;
+	  background-color: bisque;
+	  /* position: relative; /* 设置父元素为相对定位 */ */
+    }
+    .message {
+      margin-bottom: 10px;
+	  max-width: 250px;
+	  background-color: azure;
+	  padding: 8px;
+	  border-radius: 5px;
+    }
+	.sentP{
+		width: 300px;
+		min-height: 20px;
+		/* height: 20px; */
+		/* background-color: red; */
+		/* position: relative; /* 设置父元素为相对定位 */ */
+		margin-bottom: 5px;
+		display: flex;
+		justify-content:flex-end
+		
+	}
+	.sent {
+	  max-width: 250px;
+	  /* text-align: right; */
+	  background-color: aquamarine;
+	  margin-bottom: 10px;
+	  padding: 8px;
+	  border-radius: 5px;
+	  /* right: 0; /* 将子元素的右边缘与父元素的右边缘对齐*/ */
+	}
+    .message.received {
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div id="messages"></div>
+  <textarea type="text" id="input" placeholder="输入消息" ></textarea>
+  <button onclick="sendMessage()">发送</button>
+  <script>
+    const socket = new WebSocket('ws://13.52.140.151:3001'); // WebSocket 服务器的地址
+    socket.onmessage = function(event) {
+      const messages = document.getElementById('messages');
+      const message = document.createElement('div');
+      message.classList.add('message');
+      
+      if (event.data instanceof Blob) {
+        event.data.text().then(function(text) {
+          message.innerText = text;
+          message.classList.add('received');
+          messages.appendChild(message);
+        });
+      } else {
+        message.innerText = event.data;
+        message.classList.add('received');
+        messages.appendChild(message);
+      }
+    };
+    function sendMessage() {
+      const input = document.getElementById('input');
+      const message = input.value;
+      const messageElement = document.createElement('div');
+	  messageElement.classList.add('sentP')//收消息的父窗口
+	  const messageElementText = document.createElement('div');
+	  messageElement.appendChild(messageElementText)
+      messageElementText.innerText = message;
+      messageElementText.classList.add('sent');
+      document.getElementById('messages').appendChild(messageElement);
+      socket.send(JSON.stringify(message)); // 将消息对象转换为字符串
+      input.value = '';
+    }
+	
+	// 监听输入框的键盘事件
+	  // const input = document.getElementById('input');
+	  // input.addEventListener('keyup', function(event) {
+	  //   if (event.keyCode === 13) { // 判断是否按下回车键（keyCode为13）
+	  //     sendMessage(); // 发送消息
+	  //   }
+	  // });
+  </script>
+</body>
+</html>

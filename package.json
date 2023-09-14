@@ -1,0 +1,16 @@
+{
+  "name": "websocket-chat",
+  "version": "1.0.0",
+  "description": "WebSocket Chat Application",
+  "repository": "https://github.com/623725950/webSocket-Chat",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^8.4.1"
+  }
+}
+
